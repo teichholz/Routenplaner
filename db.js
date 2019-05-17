@@ -3,12 +3,12 @@ const assert = require("assert");
 const url = "mongodb://localhost:27017/";
 
 class db{
-/*         #url = "";
+        #url = "";
         #db = "";
-        #collection = ""; */
+        #collection = "";
     constructor(url, db, collection){
         this.url = url;
-        this.db = db;
+        this.dbName = db;
         this.collection = collection;
     }
     /**
@@ -18,7 +18,8 @@ class db{
     async insert(document){
         assert(typeof document == "object");
         const client = await mongo.connect(url);
-        client.db(this.db).collection(this.collection).insert(documents);
+        const db = client.db(this.dbName)
+        db.collection(this.collection).insertOne(document);
         client.close();
     }
 
@@ -29,21 +30,24 @@ class db{
     async insertMany(documents){
         assert(Array.isArray(documents));
         const client = await mongo.connect(url);
-        client.db(this.db).collection(this.collection).insertMany(documents);
+        client.db(this.dbName).collection(this.collection).insertMany(documents);
         client.close();
     }
 
     async queryAll(){
-        const client = await mongo.connect(url, {useNewUrlParser: true});
-        const cursor = yield client.db(this.db).collection(this.collection).find({}).toArray();
-        client.close();
-        return cursor;
+        const dbName = this.dbName;
+        (async function () {
+            const client = await mongo.connect(url);
+            const db = client.db(dbName);
+
+            return db.collection(this.collection).find({});
+        })().then(function (fullfilled) {
+            return fullfilled;
+        });
     }
 }
 
 let dbCon = new db(url, "swt", "user");
-console.log(dbCon.queryAll());
+dbCon.insert({name: "Tim", nachname: "Eichhlz", alter:22});
 
-/* dbCon.queryAll().then((value) =>{
-    console.log(value)
-}); */
+console.log(dbCon.queryAll());
