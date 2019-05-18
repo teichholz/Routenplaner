@@ -9,6 +9,15 @@ class db {
         this.collection = collection;
         this.client = new mongo(url, { useNewUrlParser: true });
     }
+    setCollection(collection){
+        this.collection = collection;
+    }
+    setDb(db){
+        this.db = db;
+    }
+    setUrl(url){
+        this.url = url;
+    }
     /**
      * Fuegt ein Dokument ein
      * - document: Ein JSON-Objekt

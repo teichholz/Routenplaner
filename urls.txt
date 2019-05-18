@@ -1,0 +1,1 @@
+ttps://maps.googleapis.com/maps/api/place/findplacefromtext/json?key=KEY&input=Kölner%Dom&inputtype=textquery&fields=name
