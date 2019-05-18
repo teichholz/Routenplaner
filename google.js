@@ -1,7 +1,7 @@
 const fs = require('fs');
 const fsPromises = fs.promises;
 
-async function readApiKey() {
+async function readGoogleApiKey() {
     let key;
     try {
         let file = await fsPromises.readFile('./api.key', "utf-8");
@@ -9,5 +9,9 @@ async function readApiKey() {
     } catch (err) {
         console.log(err);
     }
-    return key;
+    return key.google;
+}
+
+async function fetchGoogleResult(){
+
 }
