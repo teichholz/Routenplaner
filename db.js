@@ -108,6 +108,36 @@ class db {
         }
     }
     /**
+     * Prueft ob in der aktuellen Collections Dokumente existieren. Selektion ist optional.
+     * - callback: Eine Callback Funktion an die der Wahrheitswert uebergeben wird
+     * - selection?: Ein Json von key-value Paaren, nach welchen gefiltert werden soll
+     */
+    async exists(callback, selection) {
+        assert(
+            typeof callback == 'function',
+            'callback muss eine Funktion sein'
+        );
+        if (selection)
+            assert(
+                typeof selection == 'object',
+                'selection muss ein JSON-Objekt sein'
+            );
+        try {
+            await this.client.connect();
+            const sel = selection || {};
+            const db = this.client.db(this.dbName);
+            const count = await db
+                .collection(this.collection)
+                .find(sel)
+                .count();
+            callback(count != 0);
+        } catch (err) {
+            console.log(err);
+        } finally {
+            this.client.close();
+        }
+    }
+    /**
      * Updated die aktuelle Collection, callback ist optional.
      * - where: Ein JSON mit key-value Paaren, welche die Updatemenge beschraenken
      * - set: Ein JSON mit key-value Paaren, welche den Dokumenten hinzugefuegt werden sollen
@@ -156,6 +186,38 @@ class db {
                 .deleteMany(where, null, function(err, result) {
                     if (typeof callback === 'function') callback(err, result);
                 });
+        } catch (err) {
+            console.log(err);
+        } finally {
+            this.client.close();
+        }
+    }
+    /**
+     *  Experimentell 
+     */
+    async reduce(callback, field, mapFunc) {
+        if (callback)
+            assert(
+                typeof callback == 'function',
+                'callback muss eine Funktion sein'
+            );
+        try {
+            const mapf = mapFunc || ((acc, cur) => acc + cur);
+            const f = field || 1;
+            await this.client.connect();
+            const db = this.client.db(this.dbName);
+            const ret = await db
+                .collection(this.collection)
+                .mapReduce(
+                    function(){
+                        emit(this._id, 1);
+                    },
+                    function(key, values){
+                        return values.reduce(mapf);
+                    },
+                    {out: {inline: 1}}
+                );
+            callback(ret);
         } catch (err) {
             console.log(err);
         } finally {
