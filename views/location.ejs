@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="de">
+    <head>
+        <%- include("./includes/defhead.ejs") %>
+        <title>Routenplaner</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="./css/default.css">
+    </head>
+    <body>
+        <%- include('./includes/header.ejs') %>
+        <h2>Location wird geschickt</h2>
+        <%- include('./includes/nav.ejs') %>
+        <%- include('./includes/footer.ejs') %>
+        <script type="text/javascript">
+         function getLocation() {
+             if (navigator.geolocation) {
+                 navigator.geolocation.getCurrentPosition(sendLocation);
+             } else {
+                 console.log("Location konnte nicht bestimmt werden");
+             }
+         }
+
+         function sendLocation(location){
+             const xhr = new XMLHttpRequest();
+
+             xhr.open("POST", "http://localhost:8040/location", true);
+             xhr.setRequestHeader("Content-Type", "application/json");
+
+             const json = {
+                 "lat": location.coords.latitude,
+                 "lng": location.coords.longitude
+             }
+             /* console.log(location);
+              * console.log(JSON.stringify(json)); */
+             xhr.send(JSON.stringify(json));
+
+         }
+         getLocation();
+        </script>
+    </body>
+</html>
