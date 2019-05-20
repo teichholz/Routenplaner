@@ -2,6 +2,23 @@ const fs = require('fs');
 const fsPromises = fs.promises;
 const fetch = require("cross-fetch").fetch;
 
+const fields = {
+    formatted_address: 0,
+    geometry: 0,
+    icon: 0,
+    id: 0,
+    name: 0,
+    permanently_closed: 0,
+    photos: 0,
+    place_id: 0,
+    plus_code: 0,
+    scope: 0,
+    types: 0,
+    price_level: 0,
+    rating: 0,
+    user_ratings_total: 0
+};
+
 async function readGoogleApiKey() {
     let key;
     try {
@@ -17,7 +34,7 @@ async function fetchGoogleResult() {
     const key = await readGoogleApiKey();
     const url = 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json?' +
         'key=' + key +
-        '&input=Brandenburger%Tor&inputtype=textquery&fields=name';
+        '&input=Koeln&inputtype=textquery&fields=name';
     let res;
     try {
         res = await fetch(url);
@@ -37,3 +54,5 @@ fetchGoogleResult()
     .catch((err) => {
         console.log("fehler: " + err);
     });
+
+
