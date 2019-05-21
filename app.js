@@ -21,4 +21,4 @@ app.use(function(req, res){
         url: req.url
     });
 });
-app.listen(8040, (err) => console.log("Server Lauscht auf localhost:8040"));
+app.listen(8080, (err) => console.log("Server Lauscht auf localhost:8080"));
