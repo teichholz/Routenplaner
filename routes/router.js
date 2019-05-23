@@ -13,10 +13,11 @@ let routeHTML = function () {
 
     router.get("/map",
                function (req, res, next) {
-                    const key = google.gConnector.readGoogleApiKey();
+                    const key = google.readGoogleApiKey();
                     key
                     .then(function(value){
-                        res.render('map', {key: value});
+                    const url = "https://maps.googleapis.com/maps/api/js?key=" + value + "&callback=initMap";
+                        res.render('map', {url: url});
                     })
                     .catch(function(err){
                         res.render("map", {err: 42});

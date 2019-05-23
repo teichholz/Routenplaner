@@ -19,7 +19,7 @@ const fields = {
     user_ratings_total: 0
 };
 
-const Detailsfields = {
+const detailFields = {
     address_component: 1,
     adr_address: 1,
     alt_id: 1,
@@ -58,9 +58,9 @@ const types = {
     amusement_park: 0,
     night_club: 0
 }
-export class gConnector{
+class gConnector{
     constructor(languageCode, city){
-        this.languageCode = languageCode;
+        this.languageCode = languageCode || "en";
         this.city = city;
     }
 
@@ -97,21 +97,19 @@ export class gConnector{
               "&key=" + key;
         return url;
     }
+    async cityLocation(){
+        const url = await this.cityGeocodeUrl();
+        const result = await this.fetchGoogleResult(url);
+        const json = result.results[0];
+        const geo = json.geometry;
+        const loc = geo.location;
+        return loc;
+    }
     async nearbySearchUrl(fields, radius, location){
         const rad = radius;
-        const loc = location || await this.fetchGoogleResult(this.cityGeocodeUrl())
-        .then(function(value){
-            return value.json();
-        })
-        .then(function(value){
-            return value.results[0].geometry.location;
-        })
-        .catch(function(err){
-            console.log(err);
-        });
+        //nehme Position von Gerät oder Position der Stadt
+        const loc = location || await this.cityLocation();
         
-        
-        //results[0].geometry.location;
         const key = await gConnector.readGoogleApiKey();
         const fie = await gConnector.translateFields(fields);
         //type fehlt noch
@@ -151,13 +149,14 @@ export class gConnector{
         } catch (err) {
             console.log("Fehler beim fetchen: " + err);
         }
-        return res.json;
+        return res.json();
     }
 }
 
 
 module.exports = gConnector;
 const g = new gConnector("de", "Dortmund");
+g.cityLocation();
 
 
 // g.fetchGoogleResult(g.nearbySearchUrl(fields, 1000))
