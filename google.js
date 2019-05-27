@@ -112,13 +112,14 @@ class gConnector{
         
         const key = await gConnector.readGoogleApiKey();
         const fie = await gConnector.translateFields(fields);
+        //const typ = await gConnector.translateTypes(types)
         //type fehlt noch
 
         const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?' +
               'key=' + key +
               '&location=' + loc.lat + ',' + loc.lng +
               '&radius=' + rad +
-              '&fields=' + fie +
+              fie +
               '&language=' + this.languageCode;
               //'&keyword=' + this.city;
         console.log(url);
@@ -139,7 +140,7 @@ class gConnector{
         const url = "https://maps.googleapis.com/maps/api/directions/json?" + 
         "key" + key +
         "&origin=" + way.origin
-        "&destination=" + way.location;
+        "&destination=" + way.destination;
         return url;
     }
     async fetchGoogleResult(url) {
