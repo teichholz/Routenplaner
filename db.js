@@ -23,10 +23,10 @@ class db {
      * - document: Ein JSON-Objekt
      */
     async insertOne(document) {
-        assert(
-            typeof document == 'object',
-            'document muss ein JSON-Objekt sein'
-        );
+        // assert(
+        //     typeof document == 'object',
+        //     'document muss ein JSON-Objekt sein'
+        // );
         try {
             await this.client.connect();
             const db = this.client.db(this.dbName);
