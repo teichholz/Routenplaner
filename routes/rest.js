@@ -15,5 +15,9 @@ restRoutes.post("/route/community/anlegen", function(req, res){
 });
 
 
+restRoutes.post("/account/registrieren", function(req, res)){
+
+}
+
 
 module.exports = restRoutes;
