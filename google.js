@@ -2,9 +2,9 @@ const fs = require('fs');
 const fsPromises = fs.promises;
 const fetch = require("cross-fetch").fetch;
 
-const fields = {
+const fieldsDefault = {
     formatted_address: 1,
-    geometry: 1,
+    geometry: 0,
     icon: 0,
     id: 1,
     name: 1,
@@ -15,11 +15,11 @@ const fields = {
     scope: 0,
     types: 0,
     price_level: 0,
-    rating: 1,
+    rating: 0,
     user_ratings_total: 0
 };
 
-const types = {
+const typesDefault = {
     cafe: 0,
     bank: 0,
     meal_takeaway: 0,
@@ -73,7 +73,9 @@ class gConnector{
         return url;
     }
     async googleNearbySearchUrl(fields, radius, location){
+        fields = fields || fieldsDefault;
         const rad = radius;
+        //location sind lat und long vom user
         const loc = location || await this.fetchGoogleResult(this.cityGeocodeUrl())
         .then(function(value){
             return value.json();
@@ -87,16 +89,37 @@ class gConnector{
         
         const key = await gConnector.readGoogleApiKey();
         const fie = await gConnector.translateFields(fields);
+        //const typ = await gConnector.translateTypes(types)
         //type fehlt noch
 
         const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?' +
               'key=' + key +
               '&location=' + loc.lat + ',' + loc.lng +
               '&radius=' + rad +
-              '&fields=' + fie +
+              fie +
               '&language=' + this.languageCode;
               //'&keyword=' + this.city;
         console.log(url);
+        return url;
+    }
+    async detailsSearchUrl(id, fieldsUrl){
+        const key = await gConnector.readGoogleApiKey();
+        const fields = await gConnector.translateFields(fieldsUrl || fieldsDefault);
+        const url = "https://maps.googleapis.com/maps/api/place/details/json?" +
+                    "key=" + key +
+                    "&placeid=" + id +
+                    "&fields=" + fields +
+                    "&language=" + this.languageCode;
+        console.log(url);
+        return url;
+    }
+    //Json mit origin, destination
+    async distanceUrl(way){
+        const key = await gConnector.readGoogleApiKey();
+        const url = "https://maps.googleapis.com/maps/api/directions/json?" + 
+        "key" + key +
+        "&origin=" + way.origin
+        "&destination=" + way.destination;
         return url;
     }
     async fetchGoogleResult(url) {
@@ -111,8 +134,8 @@ class gConnector{
 }
 
 
-const g = new gConnector("de", "Dortmund");
-
+// const g = new gConnector("de", "Dortmund");
+module.exports =  gConnector;
 
 // g.fetchGoogleResult(g.googleNearbySearchUrl(fields, 1000))
 //  .then(function (result) {
