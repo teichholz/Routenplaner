@@ -7,59 +7,62 @@ mongoose.connect(url, {
 class account {
     constructor() {
     }
-    static register(name, nachname, email, passwort) {
-        let errCode = 0; //Erfolg
+    static async register(username,  email, passwort) {
+        let register = {success: true};
         account.db.on('error', function(err){
-            errCode = 3;
+            throw err;
         });
-        account.db.once('open', function () {
-            let query = account.model.find({email: email, name: name});
-            query.exec()
+        account.db.once('open', async function () {
+            let query = account.model.find({email: email, username: username});
+            await query.exec()
             .then(function(success){
                 //console.log(success);
                 if(success.length === 0){
-                    var accountInstace = new account.model({
-                        name: name,
-                        nachname: nachname,
+                    new account.model({
+                        username: username,
                         email: email,
                         passwort: passwort
                     })
                     .save(function(err){
-                        if(err)
-                            errCode = 1;
+                        // if(err)
+                        //     register.success = false;
+                        register.success = true;
                     });
                 }
                 else
-                    errCode = 2;
+                    register.success = false;
             })
             .catch(function(err){
-                console.log(err);
-                errCode = 4;
+                throw err;
+                // console.log(err);
+                // register.success = false;
             });
         });
+        return register;
     }
-    static login(name, passwort){
+    static async login(username, passwort){
+        let login = {success: true};
         account.db.on('error', function(err){
         });
         account.db.once('open', function () {
-            let query = account.model.find({name: name, passwort: passwort});
+            let query = account.model.find({username: username, passwort: passwort});
             query.exec()
             .then(function(success){
                 //console.log(success);
                 if(success.length === 1){
                     console.log("eingeloggt");
+                    return login;
                 }
             })
             .catch(function(err){
-                console.log(err);
+                throw err;
             });
         });
     }
 }
 account.db = mongoose.connection;
 account.schema = new mongoose.Schema({
-                name: String,
-                nachname: String,
+                username: String,
                 email: String,
                 passwort: String
 });
