@@ -4,6 +4,17 @@ const google = require("./../google.js");
 const account = require("./../account.js");
 const restRoutes = express.Router();
 
+restRoutes.get("/key/google", function(req, res){
+    google.readGoogleApiKey()
+    .then(function(key){
+        res.send(key);
+        res.end();
+    })
+    .catch(function(err){
+        res.send({err: "key konnte nicht geladen werden"});
+        res.end();
+    });
+});
 
 //liefert poi's mit gewissem Radius und evtl. weiteren anderen Eigenschaften
 //Zum aufraufen auf Clientseite asynchrone Funktionen benutzen
@@ -28,11 +39,13 @@ restRoutes.get("/poi/get", function(req, res){
             res.end();
         })
         .catch(function(err){
-            res.end({err: "Fehler bei REST-Request"});
+            res.send({err: "Fehler bei REST-Request"})
+            res.end();
         })
     })
     .catch(function(err){
-        res.end({err: "Fehler bei REST-Request"});
+        res.send({err: "Fehler bei REST-Request"})
+        res.end();
     });
 });
 
@@ -50,11 +63,13 @@ restRoutes.get("/poi/details", function(req, res){
             res.end();
         })
         .catch(function(err){
-            res.end({err: "Fehler bei REST-Request"});
+            res.send({err: "Fehler bei REST-Request"})
+            res.end();
         })
     })
     .catch(function(err){
-        res.end({err: "Fehler bei REST-Request"});
+        res.send({err: "Fehler bei REST-Request"})
+        res.end();
     });
 });
 
@@ -70,18 +85,12 @@ restRoutes.post("/poi/distance", function(req, res){
 
     g.fetchGoogleResult(g.distanceUrl(way))
     .then(function(response){
-        //console.log(json);
-        response.json()
-        .then(function(data){
-            res.send(data);
-            res.end();
-        })
-        .catch(function(err){
-            res.end({err: "Fehler bei REST-Request"});
-        })
+        res.send(response);
+        res.end();
     })
     .catch(function(err){
-        res.end({err: "Fehler bei REST-Request"});
+        res.send({err: "Fehler bei REST-Request"})
+        res.end();
     }); 
 
 });
@@ -99,25 +108,28 @@ restRoutes.post("/account/registrieren", function(req, res){
 
     account.register(username, email, passwort)
     .then(function(status){
-        res.end(status);
+        res.send(status);
+        res.end();
     })
     .catch(function(err){
-        res.end({success: false});
+        res.send({success: false});
+        res.end();
     })
 });
 
-restRoutes.post("/account/login", function(req, res){
-    const username = req.body.username;
-    const passwort = req.body.passwort;
+//Login ueber passport.js
+// restRoutes.post("/account/login", function(req, res){
+//     const username = req.body.username;
+//     const passwort = req.body.passwort;
 
-    account.login(username, passwort)
-    .then(function(status){
-        res.end(status);
-    })
-    .catch(function(err){
-        res.end({success: false});
-    })
-});
+//     account.login(username, passwort)
+//     .then(function(status){
+//         res.end(status);
+//     })
+//     .catch(function(err){
+//         res.end({success: false});
+//     })
+// });
 
 
 module.exports = restRoutes;

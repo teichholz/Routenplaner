@@ -129,7 +129,8 @@ class gConnector{
         } catch (err) {
             console.log("Fehler beim fetchen: " + err);
         }
-        return res;
+        //Im Auge behalten
+        return res.json();
     }
 }
 
