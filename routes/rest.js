@@ -4,6 +4,7 @@ const google = require("./../google.js");
 const account = require("./../account.js");
 const restRoutes = express.Router();
 
+//sendet key im klar text
 restRoutes.get("/key/google", function(req, res){
     google.readGoogleApiKey()
     .then(function(key){
@@ -106,6 +107,11 @@ restRoutes.post("/account/registrieren", function(req, res){
     const passwort = req.body.passwort;
     const email = req.body.email;
 
+    console.log(username);
+    console.log(passwort);
+    console.log(email);
+    
+    
     account.register(username, email, passwort)
     .then(function(status){
         res.send(status);

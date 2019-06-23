@@ -10,8 +10,14 @@ const account = require("./account.js");
 
 
 passport.use(new localStrategy(
-    function(username, password, done) {
-      account.model.findOne({ username: username }, function (err, user) {
+  function (username, password, done) {
+    console.log("in local strategy");
+    
+    account.model.findOne(
+      {
+        username: username,
+        passwort: password
+      }, function (err, user) {
         if (err) { return done(err); }
         if (!user) {
           return done(null, false, { message: 'Incorrect account.' });
@@ -21,16 +27,17 @@ passport.use(new localStrategy(
         // }
         return done(null, user);
       });
-    }
-  ));
+  }
+));
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
-app.use(bodyParser.urlencoded({extended:false}));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(cors({credentials:true, origin:true}));
+app.use(cors({ credentials: true, origin: true }));
 app.use(express.static("public"));
+app.use(passport.initialize());
 
 app.use("/", router);
 app.use("/", rest);
@@ -38,20 +45,22 @@ app.use("/", rest);
 //Login via passport.js
 app.post('/login',
   passport.authenticate('local'),
-  function(req, res) {
+  function (req, res) {
     // If this function gets called, authentication was successful.
     // `req.user` contains the authenticated user.
 
     //redirect nicht noetig da Angularfrontend
     //res.redirect('/users/' + req.user.username);
-    res.send({login: true});
+    console.log("authenticated");
+    
+    res.send({ login: true });
   });
 
 // Letzte Middleware in der Kette. Behandelt den Fall das die Ressource nicht existiert
-app.use(function(req, res){
-    res.render('404', {
-        url: req.url
-    });
+app.use(function (req, res) {
+  res.render('404', {
+    url: req.url
+  });
 });
 app.listen(8080, (err) => console.log("Server Lauscht auf localhost:8080"));
 
