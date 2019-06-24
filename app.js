@@ -30,6 +30,14 @@ passport.use(new localStrategy(
   }
 ));
 
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+
+passport.deserializeUser(function(user, done) {
+  done(null, user);
+});
+
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
