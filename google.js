@@ -94,7 +94,7 @@ class gConnector{
 
         const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?' +
               'key=' + key +
-              '&location=' + loc.lat + ',' + loc.lng +
+              '&location=' + loc.latitude + ',' + loc.longitude +
               '&radius=' + rad +
               fie +
               '&language=' + this.languageCode;
