@@ -8,7 +8,9 @@ const restRoutes = express.Router();
 restRoutes.get("/key/google", function(req, res){
     google.readGoogleApiKey()
     .then(function(key){
-        res.send(key);
+        res.send({
+            "key":key
+        });
         res.end();
     })
     .catch(function(err){
